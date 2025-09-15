@@ -416,43 +416,43 @@
     </div>
 
     <script>
-        // Массив доступных активностей с ценами
+        // Массив доступных активностей с ценами (отсортирован по алфавиту)
         const activities = [
-            {name: 'Песочница', price: 22500},
-            {name: 'Качели детские закрытые', price: 8900},
-            {name: 'Горка пластиковая', price: 15600},
-            {name: 'Гамак на одном подвесе', price: 4500},
-            {name: 'Горка зимняя', price: 13200},
-            {name: 'Сетка вертикальная', price: 7800},
-            {name: 'Сетка горизонтальная', price: 9200},
-            {name: 'Площадка для второго уровня', price: 21500},
-            {name: 'Лестница верёвочная', price: 6700},
-            {name: 'Лестница стандартная', price: 5400},
-            {name: 'Турник-трапеция', price: 8300},
-            {name: 'Кольца', price: 3900},
-            {name: 'Канат', price: 2800},
-            {name: 'Турник стационарный', price: 7200},
-            {name: 'Рукоход', price: 12500},
-            {name: 'Скалодром 61см с зацепами', price: 9800},
-            {name: 'Скалодром 122см с зацепами', price: 15600},
-            {name: 'Кольцо баскетбольное', price: 6100},
-            {name: 'Качели стандартные', price: 10400},
-            {name: 'Мишень для стрел', price: 3400},
-            {name: 'Качели "Тарзанка"', price: 8900},
-            {name: 'Качели "Гнездо"', price: 12700},
-            {name: 'Гамак тканевый', price: 5200},
-            {name: 'Гамак с подушками', price: 6800},
-            {name: 'Качели "Гнезdo" 100см', price: 14500},
-            {name: 'Доска для пресса', price: 7600},
-            {name: 'Дисковый канат', price: 8300},
-            {name: 'Боксёрский мешок+перчатки', price: 11200},
-            {name: 'Доска меловая', price: 4900},
-            {name: 'Петли Береша', price: 6700},
-            {name: 'Турник "Для папы"', price: 9500},
-            {name: 'Петли TRX', price: 7800},
-            {name: 'Мишень для ножей', price: 4100},
-            {name: 'Гамак для йоги', price: 5600},
-            {name: 'Гамак большой верёвочный', price: 8900}
+            {name: 'баскетбольное кольцо', price: 6100},
+            {name: 'боксёрский мешок+перчатки', price: 11200},
+            {name: 'гамак большой верёвочный', price: 8900},
+            {name: 'гамак для йоги', price: 5600},
+            {name: 'гамак на одном подвесе', price: 4500},
+            {name: 'гамак с подушками', price: 6800},
+            {name: 'гамак тканевый', price: 5200},
+            {name: 'горка зимняя', price: 13200},
+            {name: 'горка пластиковая', price: 15600},
+            {name: 'дисковый канат', price: 8300},
+            {name: 'доска для пресса', price: 7600},
+            {name: 'доска меловая', price: 4900},
+            {name: 'канат', price: 2800},
+            {name: 'качели "гнезdo" 100см', price: 14500},
+            {name: 'качели "гнездо"', price: 12700},
+            {name: 'качели "тарзанка"', price: 8900},
+            {name: 'качели детские закрытые', price: 8900},
+            {name: 'качели стандартные', price: 10400},
+            {name: 'кольца', price: 3900},
+            {name: 'лестница верёвочная', price: 6700},
+            {name: 'лестница стандартная', price: 5400},
+            {name: 'мишень для ножей', price: 4100},
+            {name: 'мишень для стрел', price: 3400},
+            {name: 'песочница', price: 12500},
+            {name: 'петли береша', price: 6700},
+            {name: 'петли trx', price: 7800},
+            {name: 'площадка для второго уровня', price: 21500},
+            {name: 'рукоход', price: 12500},
+            {name: 'сетка вертикальная', price: 7800},
+            {name: 'сетка горизонтальная', price: 9200},
+            {name: 'скалодром 122см с зацепами', price: 15600},
+            {name: 'скалодром 61см с зацепами', price: 9800},
+            {name: 'турник "для папы"', price: 9500},
+            {name: 'турник-трапеция', price: 8300},
+            {name: 'турник стационарный', price: 7200}
         ];
 
         // Базовая стоимость
@@ -492,10 +492,13 @@
             row.className = 'activity-row';
             row.innerHTML = `
                 <span class="row-number">${rowIndex + 1}.</span>
-                <span class="activity-content">Выберите активность...</span>
+                <span class="activity-content">выберите активность...</span>
                 <span class="activity-price" id="price-${rowIndex}">-</span>
                 <div class="dropdown">
                     <div class="dropdown-content">
+                        <div class="dropdown-item" onclick="clearSelection(${rowIndex})">
+                            (очистить выбор)
+                        </div>
                         ${activities.map(activity => 
                             `<div class="dropdown-item" onclick="selectActivity(${rowIndex}, '${activity.name.replace(/'/g, "\\'")}', ${activity.price})">
                                 ${activity.name} - ${activity.price.toLocaleString()} руб.
@@ -527,6 +530,24 @@
             
             rowsContainer.appendChild(row);
             return row;
+        }
+        
+        // Функция очистки выбора
+        function clearSelection(rowIndex) {
+            selectedActivities[rowIndex] = null;
+            
+            const row = document.querySelectorAll('.activity-row')[rowIndex];
+            const content = row.querySelector('.activity-content');
+            const priceElement = document.getElementById(`price-${rowIndex}`);
+            
+            content.textContent = 'выберите активность...';
+            content.classList.remove('activity-selected');
+            priceElement.textContent = '-';
+            
+            row.querySelector('.dropdown-content').style.display = 'none';
+            
+            orderGenerated = false;
+            document.getElementById('order-summary').style.display = 'none';
         }
         
         // Функция выбора активности
@@ -569,13 +590,13 @@
             const orderSummary = document.getElementById('order-summary');
             
             if (chosenActivities.length === 0) {
-                orderTextElement.textContent = 'Вы не выбрали ни одной активности.';
+                orderTextElement.textContent = 'вы не выбрали ни одной активности.';
                 document.getElementById('order-summary').style.display = 'block';
                 return;
             }
             
             // Формируем текст заказа в нужном формате
-            orderText = 'Комплектация:\n- база';
+            orderText = 'комплектация:\n- база';
             
             chosenActivities.forEach(([activity, data]) => {
                 if (data.count > 1) {
@@ -588,8 +609,8 @@
             const totalWithBase = totalPrice + BASE_PRICE;
             const totalWithGluedBeam = totalPrice + BASE_GLUED_BEAM_PRICE;
             
-            orderText += `\n${totalWithBase.toLocaleString()} руб. база из обычного бруса`;
-            orderText += `\n${totalWithGluedBeam.toLocaleString()} руб. база из клееного бруса`;
+            orderText += `\n${totalWithBase.toLocaleString()} база из обычного бруса`;
+            orderText += `\n${totalWithGluedBeam.toLocaleString()} база из клееного бруса`;
             
             orderTextElement.textContent = orderText;
             orderSummary.style.display = 'block';
@@ -600,16 +621,16 @@
         // Функция копирования заказа в буфер обмена
         function copyOrderToClipboard() {
             if (!orderGenerated) {
-                showStatus('Сначала сформируйте заказ!', 'error');
+                showStatus('сначала сформируйте заказ!', 'error');
                 return;
             }
             
             navigator.clipboard.writeText(orderText)
                 .then(() => {
-                    showStatus('✅ Заказ скопирован в буфер обмена!', 'success');
+                    showStatus('✅ заказ скопирован в буфер обмена!', 'success');
                 })
                 .catch(err => {
-                    showStatus('❌ Ошибка копирования: ' + err, 'error');
+                    showStatus('❌ ошибка копирования: ' + err, 'error');
                 });
         }
         
@@ -620,11 +641,11 @@
             
             priceList.innerHTML = `
                 <div class="price-item">
-                    <span>База</span>
+                    <span>база</span>
                     <span>${BASE_PRICE.toLocaleString()} руб.</span>
                 </div>
                 <div class="price-item">
-                    <span>База из клееного бруса</span>
+                    <span>база из клееного бруса</span>
                     <span>${BASE_GLUED_BEAM_PRICE.toLocaleString()} руб.</span>
                 </div>
             ` + activities.map(activity => `
@@ -686,5 +707,4 @@
         }
     </script>
 </body>
-
 </html>
