@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Элементы площадок</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 10px;
+            background-color: #f5f5f5;
+            font-size: 14px;
+        }
+        
+        .container {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        
+        .activity-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 12px;
+            border: 2px dashed #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            flex-wrap: wrap;
+        }
+        
+        .activity-row:hover {
+            border-color: #3498db;
+            background-color: #f8f9fa;
+        }
+        
+        .row-number {
+            font-weight: bold;
+            margin-right: 10px;
+            color: #7f8c8d;
+            min-width: 25px;
+        }
+        
+        .activity-content {
+            flex-grow: 1;
+            color: #7f8c8d;
+            font-style: italic;
+            word-break: break-word;
+            margin-right: 10px;
+        }
+        
+        .activity-selected {
+            color: #2c3e50;
+            font-weight: bold;
+            font-style: normal;
+        }
+        
+        .activity-price {
+            min-width: 80px;
+            text-align: right;
+            font-weight: bold;
+            color: #27ae60;
+            margin-left: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .dropdown {
+            position: relative;
+            width: 100%;
+        }
+        
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: white;
+            width: 100%;
+            max-height: 250px;
+            overflow-y: auto;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            border-radius: 6px;
+            z-index: 1000;
+            margin-top: 5px;
+            left: 0;
+        }
+        
+        .dropdown-item {
+            padding: 10px 12px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            border-bottom: 1px solid #eee;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 0.9rem;
+        }
+        
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+        
+        .dropdown-item:hover {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .dropdown-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .dropdown-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        .dropdown-content::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+        
+        .dropdown-content::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        
+        .buttons-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .submit-btn {
+            padding: 12px 15px;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+        
+        .submit-btn:hover {
+            background-color: #219a52;
+        }
+        
+        .send-btn {
+            background-color: #3498db;
+        }
+        
+        .send-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .send-btn:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        .price-btn {
+            background-color: #e67e22;
+        }
+        
+        .price-btn:hover {
+            background-color: #d35400;
+        }
+        
+        .order-summary {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f5e8;
+            border-radius: 6px;
+            border-left: 4px solid #27ae60;
+        }
+        
+        .order-title {
+            color: #27ae60;
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+        }
+        
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid #d4e6d4;
+            font-size: 0.9rem;
+            flex-wrap: wrap;
+        }
+        
+        .order-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-count {
+            font-weight: bold;
+            color: #27ae60;
+        }
+        
+        .status-message {
+            text-align: center;
+            margin-top: 12px;
+            padding: 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .loading {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .add-row-btn {
+            display: block;
+            margin: 15px auto;
+            padding: 8px 16px;
+            background-color: #9b59b6;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .add-row-btn:hover {
+            background-color: #8e44ad;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 15px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: black;
+        }
+        
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+        
+        .price-item:last-child {
+            border-bottom: none;
+        }
+        
+        .total-price {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #3498db;
+            font-weight: bold;
+            font-size: 1rem;
+            color: #2c3e50;
+        }
+        
+        /* Стили для устройств с шириной экрана больше 600px */
+        @media (min-width: 600px) {
+            body {
+                padding: 15px;
+                font-size: 16px;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+                margin-bottom: 25px;
+            }
+            
+            .activity-row {
+                padding: 15px;
+                flex-wrap: nowrap;
+            }
+            
+            .activity-price {
+                min-width: 100px;
+                font-size: 1rem;
+            }
+            
+            .dropdown-content {
+                min-width: 300px;
+                width: auto;
+            }
+            
+            .dropdown-item {
+                font-size: 1rem;
+            }
+            
+            .buttons-container {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .submit-btn {
+                width: auto;
+                min-width: 140px;
+            }
+            
+            .order-item {
+                font-size: 1rem;
+            }
+            
+            .modal-content {
+                padding: 20px;
+            }
+            
+            .price-item {
+                font-size: 1rem;
+            }
+        }
+        
+        /* Стили для устройств с шириной экрана больше 900px */
+        @media (min-width: 900px) {
+            .container {
+                padding: 30px;
+            }
+            
+            .buttons-container {
+                flex-direction: row;
+                flex-wrap: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Элементы Двор.Дети</h1>
+        
+        <div id="activity-rows">
+            <!-- Строки будут сгенерированы через JavaScript -->
+        </div>
+        
+        <button class="add-row-btn" onclick="addNewRow()">Добавить строку</button>
+        
+        <div class="buttons-container">
+            <button class="submit-btn" onclick="generateOrder()">Сформировать</button>
+            <button class="submit-btn send-btn" id="send-btn" onclick="sendToTelegram()" disabled>Отправить в Telegram</button>
+            <button class="submit-btn price-btn" onclick="showPrices()">Стоимость элементов</button>
+        </div>
+        
+        <div id="status-message" class="status-message" style="display: none;"></div>
+        
+        <div id="order-summary" class="order-summary">
+            <h2 class="order-title">Ваш заказ:</h2>
+            <div id="order-items"></div>
+            <div class="total-price" id="total-price"></div>
+        </div>
+    </div>
+
+    <!-- Модальное окно стоимости -->
+    <div id="price-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Стоимость элементов</h2>
+            <div id="price-list"></div>
+        </div>
+    </div>
+
+    <script>
+        // КОНФИГУРАЦИЯ TELEGRAM БОТА - ЗАМЕНИТЕ ЭТИ ЗНАЧЕНИЯ!
+        const BOT_TOKEN = '8310276457:AAHlcourTUxaBSOchT__m6jVcj6NBKS6yXo';
+        const CHAT_ID = '1935958627';
+
+        // Массив доступных активностей с ценами
+        const activities = [
+            {name: 'Песочница', price: 12500},
+            {name: 'Качели детские закрытые', price: 8900},
+            {name: 'Горка пластиковая', price: 15600},
+            {name: 'Гамак на одном подвесе', price: 4500},
+            {name: 'Горка зимняя', price: 13200},
+            {name: 'Сетка вертикальная', price: 7800},
+            {name: 'Сетка горизонтальная', price: 9200},
+            {name: 'Площадка для второго уровня', price: 21500},
+            {name: 'Лестница верёвочная', price: 6700},
+            {name: 'Лестница стандартная', price: 5400},
+            {name: 'Турник-трапеция', price: 8300},
+            {name: 'Кольца', price: 3900},
+            {name: 'Канат', price: 2800},
+            {name: 'Турник стационарный', price: 7200},
+            {name: 'Рукоход', price: 12500},
+            {name: 'Скалодром 61см с зацепами', price: 9800},
+            {name: 'Скалодром 122см с зацепами', price: 15600},
+            {name: 'Кольцо баскетбольное', price: 6100},
+            {name: 'Качели стандартные', price: 10400},
+            {name: 'Мишень для стрел', price: 3400},
+            {name: 'Качели "Тарзанка"', price: 8900},
+            {name: 'Качели "Гнездо"', price: 12700},
+            {name: 'Гамак тканевый', price: 5200},
+            {name: 'Гамак с подушками', price: 6800},
+            {name: 'Качели "Гнездо" 100см', price: 14500},
+            {name: 'Доска для пресса', price: 7600},
+            {name: 'Дисковый канат', price: 8300},
+            {name: 'Боксёрский мешок+перчатки', price: 11200},
+            {name: 'Доска меловая', price: 4900},
+            {name: 'Петли Береша', price: 6700},
+            {name: 'Турник "Для папы"', price: 9500},
+            {name: 'Петли TRX', price: 7800},
+            {name: 'Мишень для ножей', price: 4100},
+            {name: 'Гамак для йоги', price: 5600},
+            {name: 'Гамак большой верёвочный', price: 8900}
+        ];
+
+        // Базовая стоимость (не добавляется в список элементов)
+        const BASE_PRICE = 60000;
+        const BASE_GLUED_BEAM_PRICE = 73000;
+        
+        // Массив для хранения выбранных активностей
+        let selectedActivities = [];
+        let orderGenerated = false;
+        let rowCounter = 0;
+        let totalPrice = 0;
+        
+        // Создаем строки при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            // Создаем 3 начальные строки
+            for (let i = 0; i < 3; i++) {
+                addNewRow();
+            }
+            
+            // Закрываем выпадающие списки при клике вне их
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.activity-row')) {
+                    document.querySelectorAll('.dropdown-content').forEach(dropdown => {
+                        dropdown.style.display = 'none';
+                    });
+                }
+            });
+
+            // Проверяем конфигурацию при загрузке
+            checkTelegramConfig();
+        });
+        
+        // Функция добавления новой строки
+        function addNewRow() {
+            const rowsContainer = document.getElementById('activity-rows');
+            const rowIndex = rowCounter++;
+            
+            // Добавляем пустой элемент в массив выбранных активностей
+            selectedActivities.push(null);
+            
+            const row = document.createElement('div');
+            row.className = 'activity-row';
+            row.innerHTML = `
+                <span class="row-number">${rowIndex + 1}.</span>
+                <span class="activity-content">Выберите активность...</span>
+                <span class="activity-price" id="price-${rowIndex}">-</span>
+                <div class="dropdown">
+                    <div class="dropdown-content">
+                        ${activities.map(activity => 
+                            `<div class="dropdown-item" onclick="selectActivity(${rowIndex}, '${activity.name.replace(/'/g, "\\'")}', ${activity.price})">
+                                ${activity.name} - ${activity.price.toLocaleString()} руб.
+                            </div>`
+                        ).join('')}
+                    </div>
+                </div>
+            `;
+            
+            // Обработчик клика по строке
+            row.addEventListener('click', function(e) {
+                if (!e.target.classList.contains('dropdown-item')) {
+                    const dropdown = this.querySelector('.dropdown-content');
+                    const allDropdowns = document.querySelectorAll('.dropdown-content');
+                    
+                    // Скрываем все другие выпадающие списки
+                    allDropdowns.forEach(d => {
+                        if (d !== dropdown) d.style.display = 'none';
+                    });
+                    
+                    // Показываем/скрываем текущий список
+                    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+                    
+                    // Позиционируем выпадающий список
+                    const rect = dropdown.getBoundingClientRect();
+                    if (rect.bottom > window.innerHeight) {
+                        dropdown.style.maxHeight = '200px';
+                        dropdown.style.top = 'auto';
+                        dropdown.style.bottom = '100%';
+                    }
+                }
+            });
+            
+            rowsContainer.appendChild(row);
+            return row;
+        }
+        
+        // Проверка конфигурации Telegram
+        function checkTelegramConfig() {
+            if (BOT_TOKEN === 'YOUR_BOT_TOKEN_HERE' || CHAT_ID === 'YOUR_CHAT_ID_HERE') {
+                showStatus('⚠️ Замените BOT_TOKEN и CHAT_ID в коде на свои значения!', 'error');
+            }
+        }
+        
+        // Функция выбора активности
+        function selectActivity(rowIndex, activityName, activityPrice) {
+            selectedActivities[rowIndex] = {name: activityName, price: activityPrice};
+            
+            // Обновляем отображение строки
+            const row = document.querySelectorAll('.activity-row')[rowIndex];
+            const content = row.querySelector('.activity-content');
+            const priceElement = document.getElementById(`price-${rowIndex}`);
+            
+            content.textContent = activityName;
+            content.classList.add('activity-selected');
+            priceElement.textContent = `${activityPrice.toLocaleString()} руб.`;
+            
+            // Скрываем выпадающий список
+            row.querySelector('.dropdown-content').style.display = 'none';
+            
+            // Сбрасываем статус заказа
+            orderGenerated = false;
+            document.getElementById('send-btn').disabled = true;
+            document.getElementById('order-summary').style.display = 'none';
+        }
+        
+        // Функция формирования заказа
+        function generateOrder() {
+            // Подсчитываем количество каждой активности и общую стоимость
+            const activityCounts = {};
+            totalPrice = 0;
+            
+            selectedActivities.forEach(activity => {
+                if (activity) {
+                    activityCounts[activity.name] = {
+                        count: (activityCounts[activity.name]?.count || 0) + 1,
+                        price: activity.price
+                    };
+                    totalPrice += activity.price;
+                }
+            });
+            
+            // Фильтруем только те активности, которые были выбраны
+            const chosenActivities = Object.entries(activityCounts)
+                .filter(([_, data]) => data.count > 0);
+            
+            const orderItems = document.getElementById('order-items');
+            const orderSummary = document.getElementById('order-summary');
+            const totalPriceElement = document.getElementById('total-price');
+            
+            if (chosenActivities.length === 0) {
+                orderItems.innerHTML = '<p>Вы не выбрали ни одной активности.</p>';
+                totalPriceElement.textContent = '';
+                document.getElementById('send-btn').disabled = true;
+            } else {
+                orderItems.innerHTML = chosenActivities.map(([activity, data]) => `
+                    <div class="order-item">
+                        <span>${activity}</span>
+                        <span class="activity-count">${data.count} шт. × ${data.price.toLocaleString()} руб. = ${(data.count * data.price).toLocaleString()} руб.</span>
+                    </div>
+                `).join('');
+                
+                // Только стоимость элементов (без доставки и сборки)
+                totalPriceElement.innerHTML = `
+                    <div style="color: #e74c3c; font-size: 18px;">Итого: ${totalPrice.toLocaleString()} руб.</div>
+                `;
+                
+                document.getElementById('send-btn').disabled = false;
+            }
+            
+            orderSummary.style.display = 'block';
+            orderGenerated = true;
+            
+            // Прокручиваем к результату
+            orderSummary.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Функция показа модального окна с ценами
+        function showPrices() {
+            const modal = document.getElementById('price-modal');
+            const priceList = document.getElementById('price-list');
+            
+            // Добавляем базовые элементы в начало списка
+            priceList.innerHTML = `
+                <div class="price-item">
+                    <span>База</span>
+                    <span>${BASE_PRICE.toLocaleString()} руб.</span>
+                </div>
+                <div class="price-item">
+                    <span>База из клееного бруса</span>
+                    <span>${BASE_GLUED_BEAM_PRICE.toLocaleString()} руб.</span>
+                </div>
+            ` + activities.map(activity => `
+                <div class="price-item">
+                    <span>${activity.name}</span>
+                    <span>${activity.price.toLocaleString()} руб.</span>
+                </div>
+            `).join('');
+            
+            modal.style.display = 'block';
+        }
+        
+        // Функция закрытия модального окна
+        function closeModal() {
+            document.getElementById('price-modal').style.display = 'none';
+        }
+        
+        // Закрытие модального окна при клике вне его
+        window.onclick = function(event) {
+            const modal = document.getElementById('price-modal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+        
+        // Функция отправки в Telegram
+        function sendToTelegram() {
+            if (!orderGenerated) {
+                showStatus('Сначала сформируйте заказ!', 'error');
+                return;
+            }
+            
+            // Проверяем конфигурацию
+            if (BOT_TOKEN === 'YOUR_BOT_TOKEN_HERE' || CHAT_ID === 'YOUR_CHAT_ID_HERE') {
+                showStatus('Замените BOT_TOKEN и CHAT_ID в коде на свои значения!', 'error');
+                return;
+            }
+            
+            const sendBtn = document.getElementById('send-btn');
+            sendBtn.disabled = true;
+            showStatus('Отправляем заказ в Telegram...', 'loading');
+            
+            // Формируем текст сообщения в нужном формате
+            let message = 'Комплектация:\n- база'; // Добавляем дефис перед словом "база"
+            
+            // Подсчитываем количество каждой активности
+            const activityCounts = {};
+            selectedActivities.forEach(activity => {
+                if (activity) {
+                    activityCounts[activity.name] = (activityCounts[activity.name] || 0) + 1;
+                }
+            });
+            
+            // Добавляем выбранные элементы каждый с новой строки с дефисом перед названием
+            Object.entries(activityCounts)
+                .filter(([_, count]) => count > 0)
+                .forEach(([activity, count]) => {
+                    // Добавляем "шт" только если количество больше 1
+                    const countText = count > 1 ? ` ${count}шт` : '';
+                    message += `\n- ${activity}${countText}`;
+                });
+            
+            // Добавляем итоговые стоимости с базой
+            const totalWithBase = totalPrice + BASE_PRICE;
+            const totalWithGluedBeam = totalPrice + BASE_GLUED_BEAM_PRICE;
+            
+            message += `\n\n${totalWithBase.toLocaleString()} руб. База`;
+            message += `\n${totalWithGluedBeam.toLocaleString()} руб. База из клееного бруса`;
+            
+            // Отправляем сообщение в Telegram
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    chat_id: CHAT_ID,
+                    text: message
+                })
+            })
+            .then(response => {
+                return response.json().then(data => {
+                    return { response, data };
+                });
+            })
+            .then(({ response, data }) => {
+                if (response.ok && data.ok) {
+                    showStatus('✅ Заказ успешно отправлен в Telegram!', 'success');
+                    // Очищаем форму через 3 секунды
+                    setTimeout(() => {
+                        resetForm();
+                    }, 3000);
+                } else {
+                    let errorMsg = data.description || `Ошибка HTTP: ${response.status}`;
+                    
+                    // Более понятные сообщения об ошибках
+                    if (response.status === 404) errorMsg = 'Ошибка 404: Неправильный токен бота';
+                    else if (response.status === 400) errorMsg = 'Ошибка 400: Неправильный Chat ID или бот не добавлен в чат';
+                    else if (response.status === 403) errorMsg = 'Ошибка 403: Бот заблокирован в чате';
+                    
+                    throw new Error(errorMsg);
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка отправки:', error);
+                let errorMessage = `Ошибка отправки: ${error.message}`;
+                
+                if (error.message.includes('Failed to fetch')) {
+                    errorMessage = 'Ошибка сети: Проверьте интернет-соединение';
+                }
+                
+                showStatus(errorMessage, 'error');
+                sendBtn.disabled = false;
+            });
+        }
+        
+        // Функция показа статуса
+        function showStatus(text, type) {
+            const statusElement = document.getElementById('status-message');
+            statusElement.textContent = text;
+            statusElement.className = `status-message ${type}`;
+            statusElement.style.display = 'block';
+            
+            // Автоматическое скрытие через 5 секунд для успешных сообщений
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusElement.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        // Функция сброса формы
+        function resetForm() {
+            // Сбрасываем выбранные активности
+            selectedActivities = [];
+            totalPrice = 0;
+            
+            // Сбрасываем отображение строк
+            const rowsContainer = document.getElementById('activity-rows');
+            rowsContainer.innerHTML = '';
+            
+            // Сбрасываем счетчик строк
+            rowCounter = 0;
+            
+            // Создаем 3 начальные строки
+            for (let i = 0; i < 3; i++) {
+                addNewRow();
+            }
+            
+            // Скрываем заказ и статус
+            document.getElementById('order-summary').style.display = 'none';
+            document.getElementById('status-message').style.display = 'none';
+            document.getElementById('send-btn').disabled = true;
+            
+            orderGenerated = false;
+        }
+
+        // Тестовая функция для проверки конфигурации (вызовите в консоли браузера)
+        window.testTelegramConfig = function() {
+            if (BOT_TOKEN === 'YOUR_BOT_TOKEN_HERE' || CHAT_ID === 'YOUR_CHAT_ID_HERE') {
+                console.error('Замените BOT_TOKEN и CHAT_ID!');
+                return false;
+            }
+            
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getMe`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.ok) {
+                        console.log('✅ Бот найден:', data.result);
+                        return fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=Test+message`);
+                    } else {
+                        throw new Error('Неверный токен бота');
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.ok) {
+                        console.log('✅ Сообщение отправлено успешно!');
+                    } else {
+                        console.error('❌ Ошибка отправки:', data);
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ Ошибка проверки:', error);
+                });
+        };
+    </script>
+</body>
+</html>
