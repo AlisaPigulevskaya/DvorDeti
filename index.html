@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Элементы площадок</title>
     <style>
+        /* Стили остаются без изменений */
         body {
             font-family: Arial, sans-serif;
             max-width: 1000px;
@@ -475,7 +476,6 @@
             {name: 'рукоход', price: 3900},
             {name: 'сетка вертикальная', price: 5900},
             {name: 'сетка горизонтальная', price: 5000},
-            {name: 'скалодром 122см с зацепами', price: 5800},
             {name: 'турник для папы', price: 3800},
             {name: 'турник-трапеция', price: 1100},
             {name: 'турник стационарный', price: 1500}
@@ -484,6 +484,11 @@
         // Базовая стоимость
         const BASE_PRICE = 56000;
         const BASE_GLUED_BEAM_PRICE = 69000;
+        
+        // Константы для скалодромов
+        const STANDARD_CLIMBING_WALL = 'скалодром 122см с зацепами';
+        const COLORED_HOLDS = 'Зацепы цветные 8шт.+крепления';
+        const STANDARD_HOLDS = 'Зацепы дубровые 8шт.+крепления';
         
         // Массив для хранения выбранных активностей
         let selectedActivities = [];
@@ -494,6 +499,11 @@
         
         // Создаем строки при загрузке страницы
         document.addEventListener('DOMContentLoaded', function() {
+            // Добавляем два скалодрома по умолчанию
+            selectActivity(-1, STANDARD_CLIMBING_WALL, 5800);
+            selectActivity(-1, STANDARD_CLIMBING_WALL, 5800);
+            
+            // Добавляем дополнительные строки для выбора
             for (let i = 0; i < 3; i++) {
                 addNewRow();
             }
@@ -560,6 +570,12 @@
         
         // Функция очистки выбора
         function clearSelection(rowIndex) {
+            // Не позволяем удалять скалодромы по умолчанию
+            if (rowIndex < 2) {
+                showStatus('Нельзя удалить скалодромы по умолчанию', 'error');
+                return;
+            }
+            
             selectedActivities[rowIndex] = null;
             
             const row = document.querySelectorAll('.activity-row')[rowIndex];
@@ -578,6 +594,12 @@
         
         // Функция выбора активности
         function selectActivity(rowIndex, activityName, activityPrice) {
+            // Если rowIndex = -1, добавляем в конец
+            if (rowIndex === -1) {
+                selectedActivities.push({name: activityName, price: activityPrice});
+                return;
+            }
+            
             selectedActivities[rowIndex] = {name: activityName, price: activityPrice};
             
             const row = document.querySelectorAll('.activity-row')[rowIndex];
@@ -588,7 +610,9 @@
             content.classList.add('activity-selected');
             priceElement.textContent = `${activityPrice.toLocaleString()} руб.`;
             
-            row.querySelector('.dropdown-content').style.display = 'none';
+            if (row.querySelector('.dropdown-content')) {
+                row.querySelector('.dropdown-content').style.display = 'none';
+            }
             
             orderGenerated = false;
             document.getElementById('order-summary').style.display = 'none';
@@ -599,6 +623,7 @@
             const activityCounts = {};
             totalPrice = 0;
             
+            // Считаем количество каждого элемента
             selectedActivities.forEach(activity => {
                 if (activity) {
                     activityCounts[activity.name] = {
@@ -609,52 +634,77 @@
                 }
             });
             
-            const chosenActivities = Object.entries(activityCounts)
-                .filter(([_, data]) => data.count > 0);
+            // Подсчитываем количество цветных зацепов
+            const coloredHoldsCount = selectedActivities.filter(activity => 
+                activity && activity.name === COLORED_HOLDS
+            ).length;
             
-            const orderTextElement = document.getElementById('order-text');
-            const orderSummary = document.getElementById('order-summary');
+            // Определяем тип скалодромов для отображения
+            let climbingWallType1 = STANDARD_CLIMBING_WALL;
+            let climbingWallType2 = STANDARD_CLIMBING_WALL;
             
-            if (chosenActivities.length === 0) {
-                orderTextElement.textContent = 'вы не выбрали ни одной активности.';
-                document.getElementById('order-summary').style.display = 'block';
-                return;
+            // Меняем тип скалодромов в зависимости от количества цветных зацепов
+            if (coloredHoldsCount === 1) {
+                climbingWallType1 = 'скалодром 122см с цветными зацепами';
+            } else if (coloredHoldsCount >= 2) {
+                climbingWallType1 = 'скалодром 122см с цветными зацепами';
+                climbingWallType2 = 'скалодром 122см с цветными зацепами';
             }
+            
+            // Формируем текст заказа в нужном формате
+            orderText = 'комплектация:\n- база';
+            
+            // Добавляем скалодромы
+            orderText += `\n- ${climbingWallType1}`;
+            orderText += `\n- ${climbingWallType2}`;
+            
+            // Добавляем остальные элементы (кроме скалодромов и зацепов)
+            Object.entries(activityCounts).forEach(([activity, data]) => {
+                // Пропускаем стандартные скалодромы и зацепы, так как они уже учтены
+                if (activity !== STANDARD_CLIMBING_WALL && 
+                    activity !== STANDARD_HOLDS && 
+                    activity !== COLORED_HOLDS) {
+                    if (data.count > 1) {
+                        orderText += `\n- ${activity} ${data.count}шт`;
+                    } else {
+                        orderText += `\n- ${activity}`;
+                    }
+                }
+            });
             
             // Получаем удаленность
             const distance = parseInt(document.getElementById('distance').value) || 0;
             const deliveryCost = distance * 20 + 7500;
             
-            // Формируем текст заказа в нужном формате
-            orderText = 'комплектация:\n- база';
+            // Базовая стоимость с двумя скалодромами
+            const basePriceWithClimbingWalls = BASE_PRICE + 5800 * 2;
+            const gluedBeamPriceWithClimbingWalls = BASE_GLUED_BEAM_PRICE + 5800 * 2;
             
-            chosenActivities.forEach(([activity, data]) => {
-                if (data.count > 1) {
-                    orderText += `\n- ${activity} ${data.count}шт`;
-                } else {
-                    orderText += `\n- ${activity}`;
-                }
-            });
+            // Добавляем стоимость цветных зацепов (разница в цене между цветными и стандартными)
+            let additionalHoldsCost = 0;
+            if (coloredHoldsCount === 1) {
+                additionalHoldsCost = 4200 - 3100; // Разница для одного набора
+            } else if (coloredHoldsCount >= 2) {
+                additionalHoldsCost = (4200 - 3100) * 2; // Разница для двух наборов
+            }
             
-            const totalWithBase = totalPrice + BASE_PRICE;
-            const totalWithGluedBeam = totalPrice + BASE_GLUED_BEAM_PRICE;
-            
-            // Добавляем доставку и сборку
-            orderText += `\n${totalWithBase.toLocaleString()} база из обычного бруса`;
-            orderText += `\n${totalWithGluedBeam.toLocaleString()} база из клееного бруса`;
-            orderText += `\n${deliveryCost.toLocaleString()} доставка и сборка`;
+            const totalWithBase = totalPrice + basePriceWithClimbingWalls + additionalHoldsCost;
+            const totalWithGluedBeam = totalPrice + gluedBeamPriceWithClimbingWalls + additionalHoldsCost;
             
             // Рассчитываем итоговую стоимость с учетом скрытой надбавки
             const finalPriceBase = Math.round((totalWithBase + deliveryCost) * 1.04 + 2000);
             const finalPriceGluedBeam = Math.round((totalWithGluedBeam + deliveryCost) * 1.04 + 2000);
             
-            orderText += `\n\n${finalPriceBase.toLocaleString()} итого с обычным брусом`;
-            orderText += `\n${finalPriceGluedBeam.toLocaleString()} итого с клееным брусом`;
+            // Формируем финальное сообщение без промежуточных расчетов
+            orderText += `\n\nдоставка и сборка`;
+            orderText += `\n${finalPriceBase.toLocaleString()} база из обычного бруса`;
+            orderText += `\n${finalPriceGluedBeam.toLocaleString()} база из клееного бруса`;
             
-            orderTextElement.textContent = orderText;
-            orderSummary.style.display = 'block';
+            // Обновляем отображение
+            document.getElementById('order-text').textContent = orderText;
+            document.getElementById('order-summary').style.display = 'block';
             orderGenerated = true;
-            orderSummary.scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('order-summary').scrollIntoView({ behavior: 'smooth' });
         }
         
         // Функция копирования заказа в буфер обмена
@@ -686,6 +736,10 @@
                 <div class="price-item">
                     <span>база из клееного бруса</span>
                     <span>${BASE_GLUED_BEAM_PRICE.toLocaleString()} руб.</span>
+                </div>
+                <div class="price-item">
+                    <span>скалодром 122см с зацепами (включен по умолчанию, 2шт)</span>
+                    <span>${(5800 * 2).toLocaleString()} руб.</span>
                 </div>
             ` + activities.map(activity => `
                 <div class="price-item">
@@ -735,6 +789,11 @@
             
             rowCounter = 0;
             
+            // Добавляем два скалодрома по умолчанию
+            selectActivity(-1, STANDARD_CLIMBING_WALL, 5800);
+            selectActivity(-1, STANDARD_CLIMBING_WALL, 5800);
+            
+            // Добавляем дополнительные строки для выбора
             for (let i = 0; i < 3; i++) {
                 addNewRow();
             }
@@ -747,5 +806,3 @@
     </script>
 </body>
 </html>
-
-
