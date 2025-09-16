@@ -66,7 +66,7 @@
         }
         
         .activity-row:hover {
-            border-color: #3498db;
+            border-color: '3498db';
             background-color: #f8f9fa;
         }
         
@@ -134,7 +134,7 @@
         }
         
         .dropdown-item:hover {
-            background-color: #3498db;
+            background-color: '3498db';
             color: white;
         }
         
@@ -326,7 +326,7 @@
         .total-price {
             margin-top: 15px;
             padding-top: 15px;
-            border-top: 2px solid #3498db;
+            border-top: 2px solid '3498db';
             font-weight: bold;
             font-size: 1rem;
             color: #2c3e50;
@@ -469,7 +469,7 @@
             {name: 'лестница стандартная', price: 3300},
             {name: 'мишень для ножей', price: 3900},
             {name: 'мишень для стрел', price: 3900},
-            {name: 'Обработка нижнего бруса и заглубление', price: 3000},
+            {name: 'Ообработка нижнего бруса и заглубление', price: 3000},
             {name: 'песочница', price: 3900},
             {name: 'петли trx', price: 2800},
             {name: 'площадка для второго уровня', price: 5800},
@@ -478,7 +478,7 @@
             {name: 'сетка горизонтальная', price: 5000},
             {name: 'скалодром 122см с зацепами', price: 5800},
             {name: 'турник для папы', price: 3800},
-            {name: ' турник-трапеция', price: 1100},
+            {name: 'турник трапеция', price: 1100},
             {name: 'турник стационарный', price: 1500}
         ];
 
@@ -697,7 +697,7 @@
             const finalPriceGluedBeam = Math.round((totalWithGluedBeam + deliveryCost) * 1.04 + 2000);
             
             // Формируем финальное сообщение без промежуточных расчетов
-            orderText += `\n\nдоставка и сборка`;
+            orderText += `\nдоставка и сборка`;
             orderText += `\n${finalPriceBase.toLocaleString()} база из обычного бруса`;
             orderText += `\n${finalPriceGluedBeam.toLocaleString()} база из клееного бруса`;
             
@@ -724,7 +724,7 @@
                 });
         }
         
-        // Функция показа модального окна с ценами
+        // Функция показа модального окна с ценаи
         function showPrices() {
             const modal = document.getElementById('price-modal');
             const priceList = document.getElementById('price-list');
