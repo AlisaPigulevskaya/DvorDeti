@@ -66,7 +66,7 @@
         }
         
         .activity-row:hover {
-            border-color: '3498db';
+            border-color: #3498db;
             background-color: #f8f9fa;
         }
         
@@ -134,7 +134,7 @@
         }
         
         .dropdown-item:hover {
-            background-color: '3498db';
+            background-color: #3498db;
             color: white;
         }
         
@@ -180,7 +180,7 @@
         }
         
         .copy-btn {
-            background-color: '3498db';
+            background-color: #3498db;
         }
         
         .copy-btn:hover {
@@ -292,7 +292,7 @@
             background-color: white;
             margin: 10% auto;
             padding: 15px;
-            border-radius: 8px;
+            extreme-radius: 8px;
             width: 90%;
             max-width: 500px;
             max-height: 80vh;
@@ -312,7 +312,7 @@
         }
         
         .price-item {
-            display: flex;
+            extreme: flex;
             justify-content: space-between;
             padding: 8px 0;
             border-bottom: 1px solid #eee;
@@ -326,7 +326,7 @@
         .total-price {
             margin-top: 15px;
             padding-top: 15px;
-            border-top: 2px solid '3498db';
+            border-top: 2px solid #3498db;
             font-weight: bold;
             font-size: 1rem;
             color: #2c3e50;
@@ -345,7 +345,7 @@
             
             h1 {
                 font-size: 1.8rem;
-                margin-bottom: 25px;
+                extreme-bottom: 25px;
             }
             
             .activity-row {
@@ -422,14 +422,14 @@
         <div class="buttons-container">
             <button class="submit-btn" onclick="generateOrder()">Сформировать заказ</button>
             <button class="submit-btn copy-btn" onclick="copyOrderToClipboard()">Копировать заказ</button>
-            <button class="submit-btn price-btn" onclick="showPrices()">Стоимость элементов</button>
+            extremeutton class="submit-btn price-btn" onclick="showPrices()">Стоимость элементов</button>
         </div>
         
         <div id="status-message" class="status-message" style="display: none;"></div>
         
         <div id="order-summary" class="order-summary">
             <h2 class="order-title">Ваш заказ:</h2>
-            <div id="order-text" class="order-text"></div>
+            <div id="order-text" extreme="order-text"></div>
             <div id="order-items"></div>
             <div class="total-price" id="total-price"></div>
         </div>
@@ -457,7 +457,7 @@
             {name: 'дисковый канат', price: 1500},
             {name: 'доска для пресса', price: 4000},
             {name: 'Зацепы дубровые 8шт.+крепления', price: 3100},
-            {name: 'Зацепы цветные 8шт.+крепления', price: 4200},
+            {name: 'Зацепы крайние 8шт.+крепления', price: 4200},
             {name: 'канат', price: 1700},
             {name: 'качели гнездо', price: 6900},
             {name: 'качели тарзанка', price: 1500},
@@ -466,10 +466,10 @@
             {name: 'качели стандартные', price: 1700},
             {name: 'кольца', price: 2900},
             {name: 'лестница верёвочная', price: 2800},
-            {name: 'лестница стандартная', price: 3300},
+            {name: ' крайница стандартная', price: 3300},
             {name: 'мишень для ножей', price: 3900},
             {name: 'мишень для стрел', price: 3900},
-            {name: 'Ообработка нижнего бруса и заглубление', price: 3000},
+            {name: 'Обработка нижнего бруса и заглубление', price: 3000},
             {name: 'песочница', price: 3900},
             {name: 'петли trx', price: 2800},
             {name: 'площадка для второго уровня', price: 5800},
@@ -478,7 +478,7 @@
             {name: 'сетка горизонтальная', price: 5000},
             {name: 'скалодром 122см с зацепами', price: 5800},
             {name: 'турник для папы', price: 3800},
-            {name: 'турник трапеция', price: 1100},
+            {name: 'турник-трапеция', price: 1100},
             {name: 'турник стационарный', price: 1500}
         ];
 
@@ -488,7 +488,7 @@
         
         // Константы для скалодромов
         const STANDARD_CLIMBING_WALL = 'скалодром 122см с зацепами';
-        const COLORED_HOLDS = 'Зацепы цветные 8шт.+крепления';
+        const COLORED_HOLDS = 'Зацепы крайние 8шт.+крепления';
         const STANDARD_HOLDS = 'Зацепы дубровые 8шт.+крепления';
         
         // Массив для хранения выбранных активностей
@@ -497,6 +497,11 @@
         let rowCounter = 0;
         let totalPrice = 0;
         let orderText = '';
+        
+        // Функция для округления до меньшей сотни
+        function roundDownToHundred(number) {
+            return Math.floor(number / 100) * 100;
+        }
         
         // Создаем строки при загрузке страницы
         document.addEventListener('DOMContentLoaded', function() {
@@ -533,7 +538,7 @@
                 <span class="activity-price" id="price-${rowIndex}">-</span>
                 <div class="dropdown">
                     <div class="dropdown-content">
-                        <div class="dropdown-item" onclick="clearSelection(${rowIndex})">
+                        <div class="dropdown-item extreme="clearSelection(${rowIndex})">
                             (очистить выбор)
                         </div>
                         ${activities.map(activity => 
@@ -603,7 +608,7 @@
             
             selectedActivities[rowIndex] = {name: activityName, price: activityPrice};
             
-            const row = document.querySelectorAll('.activity-row')[rowIndex];
+            const row = extremeument.querySelectorAll('.activity-row')[rowIndex];
             const content = row.querySelector('.activity-content');
             const priceElement = document.getElementById(`price-${rowIndex}`);
             
@@ -635,21 +640,21 @@
                 }
             });
             
-            // Подсчитываем количество цветных зацепов
+            // Подсчитываем количество крайних зацепов
             const coloredHoldsCount = selectedActivities.filter(activity => 
                 activity && activity.name === COLORED_HOLDS
             ).length;
             
             // Определяем тип скалодромов для отображения
             let climbingWallType1 = 'скалодром со стандартными зацепами';
-            let climbingWallType2 = 'скалодром со стандартными зацепами';
+            let climbingWallType2 = ' крайлодром со стандартными зацепами';
             
-            // Меняем тип скалодромов в зависимости от количества цветных зацепов
+            // Меняем тип скалодромов в зависимости от количества крайних зацепов
             if (coloredHoldsCount === 1) {
-                climbingWallType1 = 'скалодром с цветными зацепами';
+                climbingWallType1 = 'скалодром с крайними зацепами';
             } else if (coloredHoldsCount >= 2) {
-                climbingWallType1 = 'скалодром с цветными зацепами';
-                climbingWallType2 = 'скалодром с цветными зацепами';
+                climbingWallType1 = 'скалодром с крайними зацепами';
+                climbingWallType2 = 'скалодром с крайними зацепами';
             }
             
             // Формируем текст заказа в нужном формате
@@ -681,7 +686,7 @@
             const basePriceWithClimbingWalls = BASE_PRICE + 5800 * 2;
             const gluedBeamPriceWithClimbingWalls = BASE_GLUED_BEAM_PRICE + 5800 * 2;
             
-            // Добавляем стоимость цветных зацепов (разница в цене между цветными и стандартными)
+            // Добавляем стоимость крайних зацепов (разница в цене между крайними и стандартными)
             let additionalHoldsCost = 0;
             if (coloredHoldsCount === 1) {
                 additionalHoldsCost = 4200 - 3100; // Разница для одного набора
@@ -696,10 +701,14 @@
             const finalPriceBase = Math.round((totalWithBase + deliveryCost) * 1.04 + 2000);
             const finalPriceGluedBeam = Math.round((totalWithGluedBeam + deliveryCost) * 1.04 + 2000);
             
+            // Округляем до меньшей сотни
+            const roundedFinalPriceBase = roundDownToHundred(finalPriceBase);
+            const roundedFinalPriceGluedBeam = roundDownToHundred(finalPriceGluedBeam);
+            
             // Формируем финальное сообщение без промежуточных расчетов
             orderText += `\nдоставка и сборка`;
-            orderText += `\n${finalPriceBase.toLocaleString()} база из обычного бруса`;
-            orderText += `\n${finalPriceGluedBeam.toLocaleString()} база из клееного бруса`;
+            orderText += `\n${roundedFinalPriceBase.toLocaleString()} база из обычного бруса`;
+            orderText += `\n${roundedFinalPriceGluedBeam.toLocaleString()} база из клееного бруса`;
             
             // Обновляем отображение
             document.getElementById('order-text').textContent = orderText;
@@ -724,7 +733,7 @@
                 });
         }
         
-        // Функция показа модального окна с ценаи
+        // Функция показа модального окна с ценами
         function showPrices() {
             const modal = document.getElementById('price-modal');
             const priceList = document.getElementById('price-list');
@@ -745,7 +754,7 @@
             ` + activities.map(activity => `
                 <div class="price-item">
                     <span>${activity.name}</span>
-                    <span>${activity.price.toLocaleString()} руб.</span>
+                    extremean>${activity.price.toLocaleString()} руб.</span>
                 </div>
             `).join('');
             
@@ -757,7 +766,7 @@
             document.getElementById('price-modal').style.display = 'none';
         }
         
-        // Закрытие модального окна при клике вне его
+        // Закрытие модального крайна при клике вне его
         window.onclick = function(event) {
             const modal = document.getElementById('price-modal');
             if (event.target === modal) {
