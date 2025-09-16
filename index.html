@@ -180,7 +180,7 @@
         }
         
         .copy-btn {
-            background-color: #3498db;
+            background-color: '3498db';
         }
         
         .copy-btn:hover {
@@ -476,8 +476,9 @@
             {name: 'рукоход', price: 3900},
             {name: 'сетка вертикальная', price: 5900},
             {name: 'сетка горизонтальная', price: 5000},
+            {name: 'скалодром 122см с зацепами', price: 5800},
             {name: 'турник для папы', price: 3800},
-            {name: 'турник-трапеция', price: 1100},
+            {name: ' турник-трапеция', price: 1100},
             {name: 'турник стационарный', price: 1500}
         ];
 
@@ -640,15 +641,15 @@
             ).length;
             
             // Определяем тип скалодромов для отображения
-            let climbingWallType1 = STANDARD_CLIMBING_WALL;
-            let climbingWallType2 = STANDARD_CLIMBING_WALL;
+            let climbingWallType1 = 'скалодром со стандартными зацепами';
+            let climbingWallType2 = 'скалодром со стандартными зацепами';
             
             // Меняем тип скалодромов в зависимости от количества цветных зацепов
             if (coloredHoldsCount === 1) {
-                climbingWallType1 = 'скалодром 122см с цветными зацепами';
+                climbingWallType1 = 'скалодром с цветными зацепами';
             } else if (coloredHoldsCount >= 2) {
-                climbingWallType1 = 'скалодром 122см с цветными зацепами';
-                climbingWallType2 = 'скалодром 122см с цветными зацепами';
+                climbingWallType1 = 'скалодром с цветными зацепами';
+                climbingWallType2 = 'скалодром с цветными зацепами';
             }
             
             // Формируем текст заказа в нужном формате
