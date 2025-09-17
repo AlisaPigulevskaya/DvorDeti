@@ -471,7 +471,6 @@
             {name: 'рукоход', price: 3900},
             {name: 'сетка вертикальная', price: 5900},
             {name: 'сетка горизонтальная', price: 5000},
-            {name: 'скалодром 122см с зацепами', price: 5800},
             {name: 'турник для папы', price: 3800},
             {name: 'турник трапеция', price: 1100},
             {name: 'турник стационарный', price: 1500}
@@ -480,7 +479,6 @@
         const BASE_PRICE = 56000;
         const BASE_GLUED_BEAM_PRICE = 69000;
         
-        const STANDARD_CLIMBING_WALL = 'скалодром 122см с зацепами';
         const COLORED_HOLDS = 'Зацепы цветные 8шт.+крепления';
         const STANDARD_HOLDS = 'Зацепы дубровые 8шт.+крепления';
         
@@ -495,10 +493,8 @@
         }
         
         document.addEventListener('DOMContentLoaded', function() {
-            selectActivity(-1, STANDARD_CLIMBING_WALL, 5800);
-            selectActivity(-1, STANDARD_CLIMBING_WALL, 5800);
-            
-            for (let i = 0; i < 3; i++) {
+            // Добавляем 5 пустых строк для выбора элементов
+            for (let i = 0; i < 5; i++) {
                 addNewRow();
             }
             
@@ -562,11 +558,6 @@
         }
         
         function clearSelection(rowIndex) {
-            if (rowIndex < 2) {
-                showStatus('Нельзя удалить скалодромы по умолчанию', 'error');
-                return;
-            }
-            
             selectedActivities[rowIndex] = null;
             
             const row = document.querySelectorAll('.activity-row')[rowIndex];
@@ -584,11 +575,6 @@
         }
         
         function selectActivity(rowIndex, activityName, activityPrice) {
-            if (rowIndex === -1) {
-                selectedActivities.push({name: activityName, price: activityPrice});
-                return;
-            }
-            
             selectedActivities[rowIndex] = {name: activityName, price: activityPrice};
             
             const row = document.querySelectorAll('.activity-row')[rowIndex];
@@ -611,7 +597,8 @@
             const activityCounts = {};
             totalPrice = 0;
             
-            selectedActivities.forEach(activity => {
+            // Считаем стоимость всех выбранных элементов
+            selectedActivities.forEach((activity) => {
                 if (activity) {
                     activityCounts[activity.name] = {
                         count: (activityCounts[activity.name]?.count || 0) + 1,
@@ -621,6 +608,7 @@
                 }
             });
             
+            // Определяем тип зацепов для скалодромов
             const coloredHoldsCount = selectedActivities.filter(activity => 
                 activity && activity.name === COLORED_HOLDS
             ).length;
@@ -635,14 +623,14 @@
                 climbingWallType2 = 'скалодром с цветными зацепами';
             }
             
+            // Формируем текст заказа
             orderText = 'комплектация:\n- база';
             orderText += `\n- ${climbingWallType1}`;
             orderText += `\n- ${climbingWallType2}`;
             
+            // Добавляем дополнительные элементы (исключая зацепы)
             Object.entries(activityCounts).forEach(([activity, data]) => {
-                if (activity !== STANDARD_CLIMBING_WALL && 
-                    activity !== STANDARD_HOLDS && 
-                    activity !== COLORED_HOLDS) {
+                if (activity !== STANDARD_HOLDS && activity !== COLORED_HOLDS) {
                     if (data.count > 1) {
                         orderText += `\n- ${activity} ${data.count}шт`;
                     } else {
@@ -651,32 +639,36 @@
                 }
             });
             
+            // Расчет стоимости доставки
             const distance = parseInt(document.getElementById('distance').value) || 0;
             const deliveryCost = distance * 20 + 7500;
             
-            const basePriceWithClimbingWalls = BASE_PRICE + 5800 * 2;
-            const gluedBeamPriceWithClimbingWalls = BASE_GLUED_BEAM_PRICE + 5800 * 2;
+            // Итоговая стоимость комплекса (база + все элементы)
+            const totalWithBase = BASE_PRICE + totalPrice;
+            const totalWithGluedBeam = BASE_GLUED_BEAM_PRICE + totalPrice;
             
-            let additionalHoldsCost = 0;
-            if (coloredHoldsCount === 1) {
-                additionalHoldsCost = 4200 - 3100;
-            } else if (coloredHoldsCount >= 2) {
-                additionalHoldsCost = (4200 - 3100) * 2;
-            }
+            // Стоимость с доставкой
+            const totalWithDeliveryBase = totalWithBase + deliveryCost;
+            const totalWithDeliveryGluedBeam = totalWithGluedBeam + deliveryCost;
             
-            const totalWithBase = totalPrice + basePriceWithClimbingWalls + additionalHoldsCost;
-            const totalWithGluedBeam = totalPrice + gluedBeamPriceWithClimbingWalls + additionalHoldsCost;
+            // Наценка за продажу (4% от суммы с доставкой + 2000)
+            const markupBase = Math.round(totalWithDeliveryBase * 0.04 + 2000);
+            const markupGluedBeam = Math.round(totalWithDeliveryGluedBeam * 0.04 + 2000);
             
-            const finalPriceBase = Math.round((totalWithBase + deliveryCost) * 1.04 + 2000);
-            const finalPriceGluedBeam = Math.round((totalWithGluedBeam + deliveryCost) * 1.04 + 2000);
+            // Финальная стоимость
+            const finalPriceBase = totalWithDeliveryBase + markupBase;
+            const finalPriceGluedBeam = totalWithDeliveryGluedBeam + markupGluedBeam;
             
+            // Округляем до сотен
             const roundedFinalPriceBase = roundDownToHundred(finalPriceBase);
             const roundedFinalPriceGluedBeam = roundDownToHundred(finalPriceGluedBeam);
             
+            // Добавляем информацию о доставке и стоимости
             orderText += `\nдоставка и сборка`;
             orderText += `\n${roundedFinalPriceBase.toLocaleString()} база из обычного бруса`;
             orderText += `\n${roundedFinalPriceGluedBeam.toLocaleString()} база из клееного бруса`;
             
+            // Отображаем заказ
             document.getElementById('order-text').textContent = orderText;
             document.getElementById('order-summary').style.display = 'block';
             orderGenerated = true;
@@ -704,16 +696,12 @@
             
             priceList.innerHTML = `
                 <div class="price-item">
-                    <span>база</span>
+                    <span>база из обычного бруса (включает 2 скалодрома)</span>
                     <span>${BASE_PRICE.toLocaleString()} руб.</span>
                 </div>
                 <div class="price-item">
-                    <span>база из клееного бруса</span>
+                    <span>база из клееного бруса (включает 2 скалодрома)</span>
                     <span>${BASE_GLUED_BEAM_PRICE.toLocaleString()} руб.</span>
-                </div>
-                <div class="price-item">
-                    <span>скалодром 122см с зацепами (включен по умолчанию, 2шт)</span>
-                    <span>${(5800 * 2).toLocaleString()} руб.</span>
                 </div>
             ` + activities.map(activity => `
                 <div class="price-item">
@@ -747,29 +735,6 @@
                     statusElement.style.display = 'none';
                 }, 3000);
             }
-        }
-        
-        function resetForm() {
-            selectedActivities = [];
-            totalPrice = 0;
-            orderText = '';
-            
-            const rowsContainer = document.getElementById('activity-rows');
-            rowsContainer.innerHTML = '';
-            
-            rowCounter = 0;
-            
-            selectActivity(-1, STANDARD_CLIMBING_WALL, 5800);
-            selectActivity(-1, STANDARD_CLIMBING_WALL, 5800);
-            
-            for (let i = 0; i < 3; i++) {
-                addNewRow();
-            }
-            
-            document.getElementById('order-summary').style.display = 'none';
-            document.getElementById('status-message').style.display = 'none';
-            
-            orderGenerated = false;
         }
     </script>
 </body>
