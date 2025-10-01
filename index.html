@@ -492,6 +492,10 @@
             return Math.floor(number / 100) * 100;
         }
         
+        function formatPriceForTelegram(price) {
+            return price.toLocaleString().replace(/\s/g, '');
+        }
+        
         document.addEventListener('DOMContentLoaded', function() {
             // Добавляем 5 пустых строк для выбора элементов
             for (let i = 0; i < 5; i++) {
@@ -663,10 +667,14 @@
             const roundedFinalPriceBase = roundDownToHundred(finalPriceBase);
             const roundedFinalPriceGluedBeam = roundDownToHundred(finalPriceGluedBeam);
             
+            // Форматируем цены для Telegram (без пробелов)
+            const telegramPriceBase = formatPriceForTelegram(roundedFinalPriceBase);
+            const telegramPriceGluedBeam = formatPriceForTelegram(roundedFinalPriceGluedBeam);
+            
             // Добавляем информацию о доставке и стоимости
             orderText += `\nдоставка и сборка`;
-            orderText += `\n${roundedFinalPriceBase.toLocaleString()} база из обычного бруса`;
-            orderText += `\n${roundedFinalPriceGluedBeam.toLocaleString()} база из клееного бруса`;
+            orderText += `\n${telegramPriceBase} база из обычного бруса`;
+            orderText += `\n${telegramPriceGluedBeam} база из клееного бруса`;
             
             // Отображаем заказ
             document.getElementById('order-text').textContent = orderText;
