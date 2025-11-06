@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Элементы площадок</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 10px;
+            background-color: #f5f5f5;
+            font-size: 14px;
+        }
+        
+        .container {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        
+        .delivery-input {
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #f0f8ff;
+            border-radius: 6px;
+            border: 1px solid #3498db;
+        }
+        
+        .delivery-input label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .delivery-input input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .activity-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 12px;
+            border: 2px dashed #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            flex-wrap: wrap;
+        }
+        
+        .activity-row:hover {
+            border-color: #3498db;
+            background-color: #f8f9fa;
+        }
+        
+        .row-number {
+            font-weight: bold;
+            margin-right: 10px;
+            color: #7f8c8d;
+            min-width: 25px;
+        }
+        
+        .activity-content {
+            flex-grow: 1;
+            color: #7f8c8d;
+            font-style: italic;
+            word-break: break-word;
+            margin-right: 10px;
+        }
+        
+        .activity-selected {
+            color: #2c3e50;
+            font-weight: bold;
+            font-style: normal;
+        }
+        
+        .activity-price {
+            min-width: 80px;
+            text-align: right;
+            font-weight: bold;
+            color: #27ae60;
+            margin-left: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .dropdown {
+            position: relative;
+            width: 100%;
+        }
+        
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: white;
+            width: 100%;
+            max-height: 250px;
+            overflow-y: auto;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            border-radius: 6px;
+            z-index: 1000;
+            margin-top: 5px;
+            left: 0;
+        }
+        
+        .dropdown-item {
+            padding: 10px 12px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            border-bottom: 1px solid #eee;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 0.9rem;
+        }
+        
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+        
+        .dropdown-item:hover {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .dropdown-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .dropdown-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        .dropdown-content::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+        
+        .dropdown-content::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        
+        .buttons-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .submit-btn {
+            padding: 12px 15px;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+        
+        .submit-btn:hover {
+            background-color: #219a52;
+        }
+        
+        .copy-btn {
+            background-color: #3498db;
+        }
+        
+        .copy-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .price-btn {
+            background-color: #e67e22;
+        }
+        
+        .price-btn:hover {
+            background-color: #d35400;
+        }
+        
+        .order-summary {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f5e8;
+            border-radius: 6px;
+            border-left: 4px solid #27ae60;
+        }
+        
+        .order-title {
+            color: #27ae60;
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+        }
+        
+        .order-text {
+            white-space: pre-line;
+            font-family: monospace;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            margin-bottom: 15px;
+        }
+        
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid #d4e6d4;
+            font-size: 0.9rem;
+            flex-wrap: wrap;
+        }
+        
+        .order-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-count {
+            font-weight: bold;
+            color: #27ae60;
+        }
+        
+        .status-message {
+            text-align: center;
+            margin-top: 12px;
+            padding: 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .add-row-btn {
+            display: block;
+            margin: 15px auto;
+            padding: 8px 16px;
+            background-color: #9b59b6;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .add-row-btn:hover {
+            background-color: #8e44ad;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 15px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: black;
+        }
+        
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+        
+        .price-item:last-child {
+            border-bottom: none;
+        }
+        
+        .total-price {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #3498db;
+            font-weight: bold;
+            font-size: 1rem;
+            color: #2c3e50;
+        }
+        
+        @media (min-width: 600px) {
+            body {
+                padding: 15px;
+                font-size: 16px;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+                margin-bottom: 25px;
+            }
+            
+            .activity-row {
+                padding: 15px;
+                flex-wrap: nowrap;
+            }
+            
+            .activity-price {
+                min-width: 100px;
+                font-size: 1rem;
+            }
+            
+            .dropdown-content {
+                min-width: 300px;
+                width: auto;
+            }
+            
+            .dropdown-item {
+                font-size: 1rem;
+            }
+            
+            .buttons-container {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .submit-btn {
+                width: auto;
+                min-width: 140px;
+            }
+            
+            .order-item {
+                font-size: 1rem;
+            }
+            
+            .modal-content {
+                padding: 20px;
+            }
+            
+            .price-item {
+                font-size: 1rem;
+            }
+        }
+        
+        @media (min-width: 900px) {
+            .container {
+                padding: 30px;
+            }
+            
+            .buttons-container {
+                flex-direction: row;
+                flex-wrap: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Элементы Двор.Дети</h1>
+        
+        <div class="delivery-input">
+            <label for="distance">Удаленность(км):</label>
+            <input type="number" id="distance" min="0" value="0" placeholder="Введите расстояние в км">
+        </div>
+        
+        <div id="activity-rows">
+            <!-- Строки будут сгенерированы через JavaScript -->
+        </div>
+        
+        <button class="add-row-btn" onclick="addNewRow()">Добавить строку</button>
+        
+        <div class="buttons-container">
+            <button class="submit-btn" onclick="generateOrder()">Сформировать заказ</button>
+            <button class="submit-btn copy-btn" onclick="copyOrderToClipboard()">Копировать заказ</button>
+            <button class="submit-btn price-btn" onclick="showPrices()">Стоимость элементов</button>
+        </div>
+        
+        <div id="status-message" class="status-message" style="display: none;"></div>
+        
+        <div id="order-summary" class="order-summary">
+            <h2 class="order-title">Ваш заказ:</h2>
+            <div id="order-text" class="order-text"></div>
+            <div id="order-items"></div>
+            <div class="total-price" id="total-price"></div>
+        </div>
+    </div>
+
+    <div id="price-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Стоимость элементов</h2>
+            <div id="price-list"></div>
+        </div>
+    </div>
+
+    <script>
+        const activities = [
+            {name: 'баскетбольное кольцо', price: 2900},
+            {name: 'гамак большой верёвочный', price: 8900},
+            {name: 'гамак для йоги', price: 5200},               
+            {name: 'гамак цветной', price: 2500},
+            {name: 'гамак с подушками', price: 3800},            
+            {name: 'гамак качели', price: 4000},
+            {name: 'горка пластиковая', price: 16900},
+            {name: 'дисковый канат', price: 1500},
+            {name: 'доска для пресса', price: 4000},
+            {name: 'Зацепы дубровые 8шт.+крепления', price: 3100},
+            {name: 'Зацепы цветные 8шт.+крепления', price: 4200},
+            {name: 'канат', price: 1700},
+            {name: 'качели гнездо', price: 6900},
+            {name: 'качели тарзанка', price: 1500},
+            {name: 'качели детские закрытые', price: 2800},
+            {name: 'качели для двоих', price: 3500},
+            {name: 'качели стандартные', price: 1700},
+            {name: 'кольца', price: 2900},
+            {name: 'лестница верёвочная', price: 2800},
+            {name: 'лестница стандартная', price: 3300},
+            {name: 'мишень для ножей', price: 3900},
+            {name: 'мишень для стрел', price: 3900},
+            {name: 'Обработка нижнего бруса и заглубление', price: 3000},
+            {name: 'песочница', price: 3900},
+            {name: 'петли trx', price: 2800},
+            {name: 'площадка для второго уровня', price: 5800},
+            {name: 'рукоход', price: 3900},
+            {name: 'сетка вертикальная', price: 5900},
+            {name: 'сетка горизонтальная', price: 5000},
+            {name: 'турник для папы', price: 3800},
+            {name: 'турник трапеция', price: 1100},
+            {name: 'турник стационарный', price: 1500}
+        ];
+
+        const BASE_PRICE = 56000;
+        const BASE_GLUED_BEAM_PRICE = 69000;
+        
+        const COLORED_HOLDS = 'Зацепы цветные 8шт.+крепления';
+        const STANDARD_HOLDS = 'Зацепы дубровые 8шт.+крепления';
+        
+        let selectedActivities = [];
+        let orderGenerated = false;
+        let rowCounter = 0;
+        let totalPrice = 0;
+        let orderText = '';
+        
+        function roundDownToHundred(number) {
+            return Math.floor(number / 100) * 100;
+        }
+        
+        function formatPriceForTelegram(price) {
+            return price.toLocaleString().replace(/\s/g, '');
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Добавляем 5 пустых строк для выбора элементов
+            for (let i = 0; i < 5; i++) {
+                addNewRow();
+            }
+            
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.activity-row')) {
+                    document.querySelectorAll('.dropdown-content').forEach(dropdown => {
+                        dropdown.style.display = 'none';
+                    });
+                }
+            });
+        });
+        
+        function addNewRow() {
+            const rowsContainer = document.getElementById('activity-rows');
+            const rowIndex = rowCounter++;
+            
+            selectedActivities.push(null);
+            
+            const row = document.createElement('div');
+            row.className = 'activity-row';
+            row.innerHTML = `
+                <span class="row-number">${rowIndex + 1}.</span>
+                <span class="activity-content">выберите активность...</span>
+                <span class="activity-price" id="price-${rowIndex}">-</span>
+                <div class="dropdown">
+                    <div class="dropdown-content">
+                        <div class="dropdown-item" onclick="clearSelection(${rowIndex})">
+                            (очистить выбор)
+                        </div>
+                        ${activities.map(activity => 
+                            `<div class="dropdown-item" onclick="selectActivity(${rowIndex}, '${activity.name.replace(/'/g, "\\'")}', ${activity.price})">
+                                ${activity.name} - ${activity.price.toLocaleString()} руб.
+                            </div>`
+                        ).join('')}
+                    </div>
+                </div>
+            `;
+            
+            row.addEventListener('click', function(e) {
+                if (!e.target.classList.contains('dropdown-item')) {
+                    const dropdown = this.querySelector('.dropdown-content');
+                    const allDropdowns = document.querySelectorAll('.dropdown-content');
+                    
+                    allDropdowns.forEach(d => {
+                        if (d !== dropdown) d.style.display = 'none';
+                    });
+                    
+                    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+                    
+                    const rect = dropdown.getBoundingClientRect();
+                    if (rect.bottom > window.innerHeight) {
+                        dropdown.style.maxHeight = '200px';
+                        dropdown.style.top = 'auto';
+                        dropdown.style.bottom = '100%';
+                    }
+                }
+            });
+            
+            rowsContainer.appendChild(row);
+            return row;
+        }
+        
+        function clearSelection(rowIndex) {
+            selectedActivities[rowIndex] = null;
+            
+            const row = document.querySelectorAll('.activity-row')[rowIndex];
+            const content = row.querySelector('.activity-content');
+            const priceElement = document.getElementById(`price-${rowIndex}`);
+            
+            content.textContent = 'выберите активность...';
+            content.classList.remove('activity-selected');
+            priceElement.textContent = '-';
+            
+            row.querySelector('.dropdown-content').style.display = 'none';
+            
+            orderGenerated = false;
+            document.getElementById('order-summary').style.display = 'none';
+        }
+        
+        function selectActivity(rowIndex, activityName, activityPrice) {
+            selectedActivities[rowIndex] = {name: activityName, price: activityPrice};
+            
+            const row = document.querySelectorAll('.activity-row')[rowIndex];
+            const content = row.querySelector('.activity-content');
+            const priceElement = document.getElementById(`price-${rowIndex}`);
+            
+            content.textContent = activityName;
+            content.classList.add('activity-selected');
+            priceElement.textContent = `${activityPrice.toLocaleString()} руб.`;
+            
+            if (row.querySelector('.dropdown-content')) {
+                row.querySelector('.dropdown-content').style.display = 'none';
+            }
+            
+            orderGenerated = false;
+            document.getElementById('order-summary').style.display = 'none';
+        }
+        
+        function generateOrder() {
+            const activityCounts = {};
+            totalPrice = 0;
+            
+            // Считаем стоимость всех выбранных элементов
+            selectedActivities.forEach((activity) => {
+                if (activity) {
+                    activityCounts[activity.name] = {
+                        count: (activityCounts[activity.name]?.count || 0) + 1,
+                        price: activity.price
+                    };
+                    totalPrice += activity.price;
+                }
+            });
+            
+            // Определяем тип зацепов для скалодромов
+            const coloredHoldsCount = selectedActivities.filter(activity => 
+                activity && activity.name === COLORED_HOLDS
+            ).length;
+            
+            let climbingWallType1 = 'скалодром со стандартными зацепами';
+            let climbingWallType2 = 'скалодром со стандартными зацепами';
+            
+            if (coloredHoldsCount === 1) {
+                climbingWallType1 = 'скалодром с цветными зацепами';
+            } else if (coloredHoldsCount >= 2) {
+                climbingWallType1 = 'скалодром с цветными зацепами';
+                climbingWallType2 = 'скалодром с цветными зацепами';
+            }
+            
+            // Формируем текст заказа
+            orderText = 'комплектация:\n- база';
+            orderText += `\n- ${climbingWallType1}`;
+            orderText += `\n- ${climbingWallType2}`;
+            
+            // Добавляем дополнительные элементы (исключая зацепы)
+            Object.entries(activityCounts).forEach(([activity, data]) => {
+                if (activity !== STANDARD_HOLDS && activity !== COLORED_HOLDS) {
+                    if (data.count > 1) {
+                        orderText += `\n- ${activity} ${data.count}шт`;
+                    } else {
+                        orderText += `\n- ${activity}`;
+                    }
+                }
+            });
+            
+            // Расчет стоимости доставки
+            const distance = parseInt(document.getElementById('distance').value) || 0;
+            const deliveryCost = distance * 20 + 7500;
+            
+            // Итоговая стоимость комплекса (база + все элементы)
+            const totalWithBase = BASE_PRICE + totalPrice;
+            const totalWithGluedBeam = BASE_GLUED_BEAM_PRICE + totalPrice;
+            
+            // Стоимость с доставкой
+            const totalWithDeliveryBase = totalWithBase + deliveryCost;
+            const totalWithDeliveryGluedBeam = totalWithGluedBeam + deliveryCost;
+            
+            // Наценка за продажу (4% от суммы с доставкой + 2000)
+            const markupBase = Math.round(totalWithDeliveryBase * 0.04 + 2000);
+            const markupGluedBeam = Math.round(totalWithDeliveryGluedBeam * 0.04 + 2000);
+            
+            // Финальная стоимость
+            const finalPriceBase = totalWithDeliveryBase + markupBase;
+            const finalPriceGluedBeam = totalWithDeliveryGluedBeam + markupGluedBeam;
+            
+            // Округляем до сотен
+            const roundedFinalPriceBase = roundDownToHundred(finalPriceBase);
+            const roundedFinalPriceGluedBeam = roundDownToHundred(finalPriceGluedBeam);
+            
+            // Форматируем цены для Telegram (без пробелов)
+            const telegramPriceBase = formatPriceForTelegram(roundedFinalPriceBase);
+            const telegramPriceGluedBeam = formatPriceForTelegram(roundedFinalPriceGluedBeam);
+            
+            // Добавляем информацию о доставке и стоимости
+            orderText += `\nдоставка и сборка`;
+            orderText += `\n${telegramPriceBase} база из обычного бруса`;
+            orderText += `\n${telegramPriceGluedBeam} база из клееного бруса`;
+            
+            // Отображаем заказ
+            document.getElementById('order-text').textContent = orderText;
+            document.getElementById('order-summary').style.display = 'block';
+            orderGenerated = true;
+            document.getElementById('order-summary').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function copyOrderToClipboard() {
+            if (!orderGenerated) {
+                showStatus('сначала сформируйте заказ!', 'error');
+                return;
+            }
+            
+            navigator.clipboard.writeText(orderText)
+                .then(() => {
+                    showStatus('✅ заказ скопирован в буфер обмена!', 'success');
+                })
+                .catch(err => {
+                    showStatus('❌ ошибка копирования: ' + err, 'error');
+                });
+        }
+        
+        function showPrices() {
+            const modal = document.getElementById('price-modal');
+            const priceList = document.getElementById('price-list');
+            
+            priceList.innerHTML = `
+                <div class="price-item">
+                    <span>база из обычного бруса (включает 2 скалодрома)</span>
+                    <span>${BASE_PRICE.toLocaleString()} руб.</span>
+                </div>
+                <div class="price-item">
+                    <span>база из клееного бруса (включает 2 скалодрома)</span>
+                    <span>${BASE_GLUED_BEAM_PRICE.toLocaleString()} руб.</span>
+                </div>
+            ` + activities.map(activity => `
+                <div class="price-item">
+                    <span>${activity.name}</span>
+                    <span>${activity.price.toLocaleString()} руб.</span>
+                </div>
+            `).join('');
+            
+            modal.style.display = 'block';
+        }
+        
+        function closeModal() {
+            document.getElementById('price-modal').style.display = 'none';
+        }
+        
+        window.onclick = function(event) {
+            const modal = document.getElementById('price-modal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+        
+        function showStatus(text, type) {
+            const statusElement = document.getElementById('status-message');
+            statusElement.textContent = text;
+            statusElement.className = `status-message ${type}`;
+            statusElement.style.display = 'block';
+            
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusElement.style.display = 'none';
+                }, 3000);
+            }
+        }
+    </script>
+</body>
+</html>
